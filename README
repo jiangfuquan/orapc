@@ -1,0 +1,7 @@
+This is a readme file for orapc.
+OraPC is a cross platform application which store point cloud data to oracle database by oracle c++ call interface
+
+OraPC depend oracle c++ call interface and gtk+ library
+
+This application is simple and not release.
+Please notice release version to use.
