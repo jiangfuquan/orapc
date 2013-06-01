@@ -22,7 +22,7 @@ public:
     bool Connect(const wstring &ConnectString, const wstring &UserName, 
             const wstring &Password);
     bool IsConnected();
-    bool DisConnnect();
+    bool DisConnect();
 public:
     bool InitDatabase(const wstring &ConnectString, const wstring &SysUser,
             const wstring &Password);
@@ -35,7 +35,7 @@ private:
     {
     public:
         ~Garbo();
-    }
+    };
     static Garbo garbo;
 };
 

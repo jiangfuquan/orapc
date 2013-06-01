@@ -1,0 +1,10 @@
+
+
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include/OcciOperator)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/oracle/include)
+
+LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/oracle/lib)
+
+ADD_LIBRARY(OcciOperator SHARED OcciOperator.cpp)
+TARGET_LINK_LIBRARIES(OcciOperator oraocci11)
+

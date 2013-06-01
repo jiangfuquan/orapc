@@ -1,11 +1,15 @@
 
 #include "OcciOperator.h"
 
+#include <stdlib.h>
+
 #define OCCI_TRY try{
 #define OCCI_CATCH(ret) }\
 catch(SQLException &excp)\
 {\
-    ErrorMessage = excp.what();\
+    wchar_t str[10240];\
+    mbstowcs(str, excp.what(), 10240);\
+    ErrorMessage = wstring(str);\
     return ret;\
 }\
 catch(std::wstring &str)\
@@ -49,7 +53,7 @@ OcciOperator::OcciOperator()
 
 OcciOperator::~OcciOperator()
 {
-    if(pOcciConnectionPool != NULL)
+    if(pConnectionPool != NULL)
         pEnvironment->terminateStatelessConnectionPool(pConnectionPool);
     if(pEnvironment != NULL)
         Environment::terminateEnvironment(pEnvironment);
@@ -65,9 +69,42 @@ const std::wstring OcciOperator::GetErrorMessage()
 bool OcciOperator::Connect(const wstring &ConnectString,
         const wstring &UserName, const wstring &Password)
 {
-    OCCI_TRY;
-    pConnectionPool = pEnvironment->createStatelessConnectionPool(UserName, Password, ConnectString);
-    OCCI_CATCH(false);
+	//OCCI_TRY;
+	bool ret = false;
+	try{
+		char un[1024];
+		char pw[1024];
+		char cs[1024];
+		wcstombs(cs, ConnectString.c_str(), 1024);
+		wcstombs(un, UserName.c_str(), 1024);
+		wcstombs(pw, Password.c_str(), 1024);
+		pConnectionPool = pEnvironment->createStatelessConnectionPool(un, pw, cs);
+		//OCCI_CATCH(false);
+	}
+	catch(SQLException &excp)
+	{
+		wchar_t str[10240];
+		mbstowcs(str, excp.what(), 10240);
+		ErrorMessage = wstring(str);
+		return ret;
+	}
+	catch(std::wstring &str)
+	{
+		ErrorMessage = str;
+		return ret;
+	}
+	catch(wchar_t *str)
+	{
+		ErrorMessage = str;
+		return ret;
+	}
+	catch(...)
+	{
+		ErrorMessage = L"Î´Öª´íÎó";
+		return ret;
+	}
+
+
     return true;
 }
 
@@ -76,10 +113,10 @@ bool OcciOperator::IsConnected()
     if(pConnectionPool == NULL)
         return false;
     else
-        return ture;
+        return true;
 }
 
-bool OcciOperator::Disconnect()
+bool OcciOperator::DisConnect()
 {
     OCCI_TRY;
     if(pConnectionPool != NULL)
@@ -95,5 +132,6 @@ bool OcciOperator::InitDatabase(const wstring &ConnectString,
         const wstring &SysUser, const wstring &Password)
 {
     ErrorMessage = L"this function is not completely";
+	return false;
 }
         
